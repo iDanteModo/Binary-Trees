@@ -118,9 +118,9 @@ class Tree {
     this.preOrder(root.left);
     this.preOrder(root.right);
   }
-  
+
   inOrder(root) {
-    if(root === null) return;
+    if (root === null) return;
     this.inOrder(root.left);
     console.log(root.data);
     this.inOrder(root.right);
@@ -134,46 +134,59 @@ class Tree {
   }
   levelOrder(root) {
     let queue = new Queue();
-    queue.enqueue(root);  // Add the root to the queue
-    
+    queue.enqueue(root); // Add the root to the queue
+
     // Then, in your level-order traversal function:
     while (!queue.isEmpty()) {
       let node = queue.dequeue();
-      console.log(node.data);  // Process the node
-      
+      console.log(node.data); // Process the node
+
       // Add children to the queue
       if (node.left) queue.enqueue(node.left);
       if (node.right) queue.enqueue(node.right);
     }
   }
   height(root, value) {
-    let currentRoot = this.find(root, value); 
+    let currentRoot = this.find(root, value);
     let height = 0;
-    console.log(currentRoot);
-    while(currentRoot) {
-      if(currentRoot.right){
+    while (currentRoot) {
+      if (currentRoot.right) {
         currentRoot = currentRoot.right;
-        height ++;
-      }else if (currentRoot.left){
+        height++;
+      } else if (currentRoot.left) {
         currentRoot = currentRoot.left;
-        height ++;
-      }else {
-        console.log(`Height is ${height}`);
+        height++;
+      } else {
+        console.log(`Height of ${value} is ${height}`);
         return height;
       }
     }
+  }
+  depth(root, value, depth = 0) {
+    if (root.data === value) {
+      console.log(`Depth of ${value} is ${depth}`);
+      return depth;
     }
-    depth(root, value, depth = 0){
-      if(root.data === value){
-        console.log(`Depth is ${depth}`);
-        return depth;
-      } 
-      if(value < root.data && root.left){
-        return this.depth(root.left ,value, depth + 1);
-      }else if (value > root.data && root.right) {
-        return this.depth(root.right, value, depth +1);
-      }
+    if (value < root.data && root.left) {
+      return this.depth(root.left, value, depth + 1);
+    } else if (value > root.data && root.right) {
+      return this.depth(root.right, value, depth + 1);
     }
+  }
+  isBalanced(root) {
+    console.log(root);
+    let leftRootSize = this.height(root, root.left.data);
+    let rightRootSize = this.height(root, root.right.data);
+    let difference = leftRootSize - rightRootSize;
+    console.log(`Left Size ${leftRootSize} // Right Size ${rightRootSize} Difference is ${difference}`);
+    if(difference <= 1 && difference >= -1){
+      console.log("Balanced");
+      return true;
+    }
+    return false;
+    
+    
+  }
   prettyPrint(node, prefix = "", isLeft = true) {
     if (node === null) {
       return;
@@ -252,7 +265,6 @@ class Tree {
   }
   find(root, value) {
     if (value === root.data) {
-      console.log("FOUND IT ");
       return root;
     }
     if (value < root.data && root.left) {
@@ -272,7 +284,7 @@ const tree = new Tree();
 let root = tree.sortArray(array2);
 
 // Pretty print the BST structure
-tree.prettyPrint(root);
+// tree.prettyPrint(root);
 // root = tree.insert(root, 0);
 // tree.prettyPrint(newNodeRoot);
 // root = tree.deleteItem(root, 67);
@@ -288,6 +300,17 @@ tree.prettyPrint(root);
 // console.log("POST ORDER");
 // tree.postOrder(root);
 
+root = tree.insert(root, 0);
+root = tree.insert(root, 12);
+root = tree.insert(root, 33);
+root = tree.insert(root, 42);
+root = tree.insert(root, 288);
+root = tree.insert(root, 333);
+root = tree.insert(root, 38141);
+root = tree.insert(root, 11);
+tree.prettyPrint(root);
+
 tree.height(root, 324);
-tree.depth(root, 8);
+tree.depth(root, 11);
+tree.isBalanced(root)
 // Duplicate 7, 9, 4
