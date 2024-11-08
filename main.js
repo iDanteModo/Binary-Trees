@@ -112,11 +112,13 @@ class Tree {
   }
 
   // Preorder traversal: root, left, right
-  preOrder(root) {
-    if (root === null) return;
-    console.log(root.data);
-    this.preOrder(root.left);
-    this.preOrder(root.right);
+  preOrder(root, newArray = []) {
+    if (root === null) return newArray;
+    newArray.push(root.data);
+    // console.log(root.data);
+    this.preOrder(root.left, newArray);
+    this.preOrder(root.right, newArray);
+    return newArray;
   }
 
   inOrder(root) {
@@ -134,33 +136,48 @@ class Tree {
   }
   levelOrder(root) {
     let queue = new Queue();
+    let nodesTraverse = 0;
+    let height = 0;
     queue.enqueue(root); // Add the root to the queue
 
     // Then, in your level-order traversal function:
     while (!queue.isEmpty()) {
       let node = queue.dequeue();
       console.log(node.data); // Process the node
-
       // Add children to the queue
       if (node.left) queue.enqueue(node.left);
       if (node.right) queue.enqueue(node.right);
     }
   }
-  height(root, value) {
-    let currentRoot = this.find(root, value);
-    let height = 0;
-    while (currentRoot) {
-      if (currentRoot.right) {
-        currentRoot = currentRoot.right;
-        height++;
-      } else if (currentRoot.left) {
-        currentRoot = currentRoot.left;
-        height++;
-      } else {
-        console.log(`Height of ${value} is ${height}`);
-        return height;
-      }
+  height(root, target) {
+    // Base case: if the root is null, return -1 (height of an empty subtree)
+    if (root === null) {
+      return -1;
     }
+
+    // If we find the target node, calculate the height from this node
+    if (root.data === target) {
+      return this.calculateHeight(root);
+    }
+
+    // Recursively search for the node in the left and right subtrees
+    if (target < root.data) {
+      return this.height(root.left, target);
+    } else {
+      return this.height(root.right, target);
+    }
+  }
+
+  // Helper function to calculate the height of a node
+  calculateHeight(node) {
+    if (node === null) {
+      return -1;
+    }
+
+    let leftHeight = this.calculateHeight(node.left);
+    let rightHeight = this.calculateHeight(node.right);
+
+    return Math.max(leftHeight, rightHeight) + 1;
   }
   depth(root, value, depth = 0) {
     if (root.data === value) {
@@ -174,18 +191,23 @@ class Tree {
     }
   }
   isBalanced(root) {
-    console.log(root);
     let leftRootSize = this.height(root, root.left.data);
     let rightRootSize = this.height(root, root.right.data);
+    console.log(`Left size ${leftRootSize} Right Size ${rightRootSize}`);
     let difference = leftRootSize - rightRootSize;
-    console.log(`Left Size ${leftRootSize} // Right Size ${rightRootSize} Difference is ${difference}`);
-    if(difference <= 1 && difference >= -1){
+    console.log(
+      `Left Size ${leftRootSize} // Right Size ${rightRootSize} Difference is ${difference}`
+    );
+    if (difference <= 1 && difference >= -1) {
       console.log("Balanced");
       return true;
     }
+    console.log("Unbalanced");
     return false;
-    
-    
+  }
+  rebalance(root){
+    let balancedTree = this.preOrder(root);
+    return root = this.buildTree(balancedTree, 0, balancedTree.length - 1);
   }
   prettyPrint(node, prefix = "", isLeft = true) {
     if (node === null) {
@@ -310,7 +332,11 @@ root = tree.insert(root, 38141);
 root = tree.insert(root, 11);
 tree.prettyPrint(root);
 
-tree.height(root, 324);
+console.log(tree.height(root, 8));
 tree.depth(root, 11);
-tree.isBalanced(root)
-// Duplicate 7, 9, 4
+tree.isBalanced(root);
+
+tree.preOrder(root);
+let reBalanced = tree.rebalance(root);
+tree.prettyPrint(reBalanced);
+tree.isBalanced(reBalanced);
