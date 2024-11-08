@@ -6,6 +6,85 @@ class Node {
   }
 }
 
+class Stack {
+  constructor() {
+    this.items = [];
+  }
+
+  // Push an element onto the stack
+  push(element) {
+    this.items.push(element);
+  }
+
+  // Pop an element off the stack
+  pop() {
+    if (this.isEmpty()) {
+      return null; // or throw an error if needed
+    }
+    return this.items.pop();
+  }
+
+  // Peek at the top element of the stack without removing it
+  peek() {
+    if (this.isEmpty()) {
+      return null;
+    }
+    return this.items[this.items.length - 1];
+  }
+
+  // Check if the stack is empty
+  isEmpty() {
+    return this.items.length === 0;
+  }
+
+  // Get the size of the stack
+  size() {
+    return this.items.length;
+  }
+
+  // Clear the stack
+  clear() {
+    this.items = [];
+  }
+}
+
+class Queue {
+  constructor() {
+    this.items = [];
+  }
+
+  // Add an element to the queue
+  enqueue(element) {
+    this.items.push(element);
+  }
+
+  // Remove and return the front element of the queue
+  dequeue() {
+    if (this.isEmpty()) {
+      return null;
+    }
+    return this.items.shift();
+  }
+
+  // Check if the queue is empty
+  isEmpty() {
+    return this.items.length === 0;
+  }
+
+  // Return the front element without removing it
+  front() {
+    if (this.isEmpty()) {
+      return null;
+    }
+    return this.items[0];
+  }
+
+  // Return the size of the queue
+  size() {
+    return this.items.length;
+  }
+}
+
 class Tree {
   buildTree(array, start, end) {
     if (start > end) return null;
@@ -22,12 +101,11 @@ class Tree {
   sortArray(array) {
     // Sort the array within this method
     const sortedArray = array.sort((a, b) => a - b);
-    console.log(`Sorted Array by value : ${sortedArray}`)
-    const alreadySeen = {};
-    for ( let i = 0; i < sortedArray.length; i++) {
-        if ( sortedArray[i] === sortedArray[i + 1] ){
-            sortedArray.splice(i, 1)
-        }
+    console.log(`Sorted Array by value : ${sortedArray}`);
+    for (let i = 0; i < sortedArray.length; i++) {
+      if (sortedArray[i] === sortedArray[i + 1]) {
+        sortedArray.splice(i, 1);
+      }
     }
     console.log(`Sorted Array by value and duplicates removed ${sortedArray}`);
     return this.buildTree(sortedArray, 0, sortedArray.length - 1);
@@ -40,8 +118,62 @@ class Tree {
     this.preOrder(root.left);
     this.preOrder(root.right);
   }
+  
+  inOrder(root) {
+    if(root === null) return;
+    this.inOrder(root.left);
+    console.log(root.data);
+    this.inOrder(root.right);
+  }
 
-  // Method to pretty-print the tree structure
+  postOrder(root) {
+    if (root === null) return;
+    this.postOrder(root.left);
+    this.postOrder(root.right);
+    console.log(root.data);
+  }
+  levelOrder(root) {
+    let queue = new Queue();
+    queue.enqueue(root);  // Add the root to the queue
+    
+    // Then, in your level-order traversal function:
+    while (!queue.isEmpty()) {
+      let node = queue.dequeue();
+      console.log(node.data);  // Process the node
+      
+      // Add children to the queue
+      if (node.left) queue.enqueue(node.left);
+      if (node.right) queue.enqueue(node.right);
+    }
+  }
+  height(root, value) {
+    let currentRoot = this.find(root, value); 
+    let height = 0;
+    console.log(currentRoot);
+    while(currentRoot) {
+      if(currentRoot.right){
+        currentRoot = currentRoot.right;
+        height ++;
+      }else if (currentRoot.left){
+        currentRoot = currentRoot.left;
+        height ++;
+      }else {
+        console.log(`Height is ${height}`);
+        return height;
+      }
+    }
+    }
+    depth(root, value, depth = 0){
+      if(root.data === value){
+        console.log(`Depth is ${depth}`);
+        return depth;
+      } 
+      if(value < root.data && root.left){
+        return this.depth(root.left ,value, depth + 1);
+      }else if (value > root.data && root.right) {
+        return this.depth(root.right, value, depth +1);
+      }
+    }
   prettyPrint(node, prefix = "", isLeft = true) {
     if (node === null) {
       return;
@@ -85,37 +217,50 @@ class Tree {
 
     return root; // Return the unchanged root pointer
   }
-  // Function to get successor for deleteItem function                      // <root> <left> <right> PreOrder
-  getSuccessor(current) {                                                  //  <left> <root> <right> InOrder
-    current = current.right;                                              //   <left> <right> <root> PostOrder
+  // Function to get successor for deleteItem function   INORDER            // <root> <left> <right> PreOrder
+  getSuccessor(current) {
+    //  <left> <root> <right> InOrder
+    current = current.right; // <left> <right> <root> PostOrder
     while (current !== null && current.left !== null) {
-        current = current.left;
+      current = current.left;
     }
     return current;
   }
   deleteItem(root, value) {
-    // Base Case 
+    // Base Case
     if (root === null) {
-        return root;
+      return root;
     }
     // If key to be searched is in a subtree
-    if (root.data > value){
-        root.left = this.deleteItem(root.left, value);
-    }else if( root.data < value) {
-        root.right = this.deleteItem(root.right, value);
-    }else {
-        // If root matches with the given key
-    
-        // Cases when root has 0 children or only right child
-        if(root.left === null) return root.right;
-        // When root has only left child
-        if(root.right === null) return root.left;
-        // When both children are present
-        let succesor = this.getSuccessor(root);
-        root.data = succesor.data;
-        root.right = this.deleteItem(root.right, succesor.data);
+    if (root.data > value) {
+      root.left = this.deleteItem(root.left, value);
+    } else if (root.data < value) {
+      root.right = this.deleteItem(root.right, value);
+    } else {
+      // If root matches with the given key
+
+      // Cases when root has 0 children or only right child
+      if (root.left === null) return root.right;
+      // When root has only left child
+      if (root.right === null) return root.left;
+      // When both children are present
+      let succesor = this.getSuccessor(root);
+      root.data = succesor.data;
+      root.right = this.deleteItem(root.right, succesor.data);
     }
     return root;
+  }
+  find(root, value) {
+    if (value === root.data) {
+      console.log("FOUND IT ");
+      return root;
+    }
+    if (value < root.data && root.left) {
+      return this.find(root.left, value);
+    } else if (value > root.data && root.right) {
+      return this.find(root.right, value);
+    }
+    return false;
   }
 }
 
@@ -128,10 +273,21 @@ let root = tree.sortArray(array2);
 
 // Pretty print the BST structure
 tree.prettyPrint(root);
-// const newNodeRoot = tree.insert(root, 82);
+// root = tree.insert(root, 0);
 // tree.prettyPrint(newNodeRoot);
-root = tree.deleteItem(root, 67);
-tree.prettyPrint(root);
+// root = tree.deleteItem(root, 67);
+// tree.prettyPrint(root);
+// console.log(tree.find(root, 4));
 
+// console.log("PRE ORDER")
+// tree.preOrder(root);
+// console.log("IN ORDER");
+// tree.inOrder(root);
+// console.log("LEVEL ORDER");
+// tree.levelOrder(root);
+// console.log("POST ORDER");
+// tree.postOrder(root);
 
+tree.height(root, 324);
+tree.depth(root, 8);
 // Duplicate 7, 9, 4
