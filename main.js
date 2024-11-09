@@ -9,21 +9,21 @@ const tree = new Tree();
 let root = tree.sortArray(array2);
 
 // Pretty print the BST structure
-// tree.prettyPrint(root);
 // root = tree.insert(root, 0);
 // tree.prettyPrint(newNodeRoot);
 // root = tree.deleteItem(root, 67);
 // tree.prettyPrint(root);
 // console.log(tree.find(root, 4));
 
-// console.log("PRE ORDER")
-// tree.preOrder(root);
-// console.log("IN ORDER");
-// tree.inOrder(root);
-// console.log("LEVEL ORDER");
-// tree.levelOrder(root);
-// console.log("POST ORDER");
-// tree.postOrder(root);
+tree.prettyPrint(root);
+console.log("PRE ORDER")
+tree.preOrder(root);
+console.log("IN ORDER");
+tree.inOrder(root);
+console.log("LEVEL ORDER");
+tree.levelOrder(root);
+console.log("POST ORDER");
+tree.postOrder(root);
 
 root = tree.insert(root, 0);
 root = tree.insert(root, 12);
