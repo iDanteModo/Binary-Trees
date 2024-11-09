@@ -9,6 +9,7 @@ const tree = new Tree();
 let root = tree.sortArray(array2);
 
 // Pretty print the BST structure
+// tree.prettyPrint(root);
 // root = tree.insert(root, 0);
 // tree.prettyPrint(newNodeRoot);
 // root = tree.deleteItem(root, 67);

@@ -3,16 +3,26 @@ import {Queue } from "./queue.js";
 
 
 export class Tree {
-    buildTree(array, start, end) {
-      if (start > end) return null;
-  
-      let mid = start + Math.floor((end - start) / 2);
-      let root = new Node(array[mid]);
-  
-      root.left = this.buildTree(array, start, mid - 1);
-      root.right = this.buildTree(array, mid + 1, end);
-      return root;
-    }
+  constructor(array) {
+    const sortedArray = [... new Set(array)].sort((a,b) => a - b);
+    this.root= this.buildTree(sortedArray, 0, sortedArray.length - 1);
+  }
+  buildTree(array) {
+    if (array.length === 0) return null;
+
+    let midIndex =  Math.floor(array.length / 2);
+    let midValue = array[midIndex];
+    let node = new Node(midValue)
+
+    let left = array.slice(0, midIndex);
+    let right = array.slice(midIndex + 1);
+
+    node.left = this.buildTree(left);
+    node.right = this.buildTree(right);
+
+    return node
+}
+
   
     // A method to sort the array and build the tree
     sortArray(array) {
